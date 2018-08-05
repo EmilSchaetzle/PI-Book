@@ -19,9 +19,7 @@ int main(){
     // Creating keyboard configuration
     struct uinput_setup usetup;
     memset(&usetup, 0, sizeof(usetup));
-    usetup.id.bustype = BUS_USB;
-    usetup.id.vendor = 0x1234;
-    usetup.id.product = 0x5678;
+    usetup.id.bustype = BUS_RS232;
     strcpy(usetup.name, "PI-Book keyboard");
     // Creating instance
     int kb = open("/dev/uinput", O_WRONLY | O_NONBLOCK);
