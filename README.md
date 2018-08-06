@@ -1,0 +1,2 @@
+# PI-Book
+This project features the development of a new raspberry pi based mobile laptop. This new laptop will be optimized on battery life more than on computing power. We are planing to use a solarpanel aswell, to make the energy supply possible in areas with no electric energy. Additionally we want to implement several interfaces, that are commonly not found in modern laptop, but which are great for measuring and development as a RS 232 port, I2C or a few raw GPIO pins. The product itself should become a cost-efficient solution for developing countries.
