@@ -1,4 +1,8 @@
-#include "std_headers.h"
+#include <stdio.h>
+#include <unistd.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
 #include <linux/uinput.h>
 #include <fcntl.h>
 #include "keyboard.h"
