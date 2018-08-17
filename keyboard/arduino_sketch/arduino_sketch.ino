@@ -1,20 +1,18 @@
 const int pin = 0;
-const int baud = 300;
+const int baud = 5000;
 void setup() {
   pinMode(pin, OUTPUT);
   digitalWrite(pin, HIGH);
   delay(1);
-  for (int i = 0; i < 128000; i++){
-    send(i%128, true);
+  for (int i = 0; i < 25600; i++) {
+    send(i % 256);
   }
 
 }
 void loop() {}
-void send(byte key, bool state) {
+void send(byte key) {
   // Start bit
   digitalWrite(pin, LOW);
-  delayMicroseconds(1000000 / baud);
-  digitalWrite(pin, state);
   delayMicroseconds(1000000 / baud);
   for (int i = 0; i < 8; i++) {
     digitalWrite(pin, bitRead(key, i));
