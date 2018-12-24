@@ -13,7 +13,7 @@
 #define BAUD 10000
 #define PIN_MAX 77
 const int bit_dur = 1000000 / BAUD;
-int gpio_irq;
+int GPIO_IRQ;
 struct timeval last;
 bool receiving = false;
 bool start_bit_handled;
@@ -249,6 +249,18 @@ static void data_received(void)
     {
         key_up(data - 78);
     }
+    else if (data == 156)
+    {
+        printk(KERN_INFO "Keyboard: mouse button down\n");
+        set_key_state(BTN_LEFT, 1);
+        input_sync(input_device);
+    }
+    else if (data == 157)
+    {
+        printk(KERN_INFO "Keyboard: mouse button up\n");
+        set_key_state(BTN_LEFT, 0);
+        input_sync(input_device);
+    }
     else if (data <= 224)
     {
         // tilt_x(data - 209);
@@ -328,7 +340,7 @@ static void falling(void)
         }
     }
 }
-static irq_handler_t interrupt(unsigned int irq, void *dev_id, struct pt_regs *regs)
+static irqreturn_t interrupt(int irq, void *dev_id)
 {
     if (gpio_get_value(PIN))
     {
@@ -338,7 +350,7 @@ static irq_handler_t interrupt(unsigned int irq, void *dev_id, struct pt_regs *r
     {
         falling();
     }
-    return (irq_handler_t)IRQ_HANDLED;
+    return IRQ_HANDLED;
 }
 static inline void register_key(int key)
 {
@@ -349,14 +361,31 @@ static int __init kb_mod_init(void)
     int result;
     int i;
     printk(KERN_INFO "Keyboard: Initialising on pin %i\n", PIN);
-    gpio_request(PIN, "Keyboard pin");
-    gpio_direction_input(PIN);
-    printk(KERN_INFO "Keyboard: First value: %i\n", gpio_get_value(PIN));
-    gpio_irq = gpio_to_irq(PIN);
-    result = request_irq(gpio_irq, (irq_handler_t)interrupt, IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING, "Keyboard interrupt", NULL);
+    result = gpio_request(PIN, "Keyboard pin");
     if (result != 0)
     {
-        printk(KERN_ERR "Keyboard: Can't allocate IRQ %d\n", gpio_irq);
+        printk(KERN_ERR "Keyboard: Can't allocate pin %i\n", PIN);
+        return result;
+    }
+    result = gpio_direction_input(PIN);
+    if (result != 0)
+    {
+        printk(KERN_ERR "Keyboard: Can't set pin %i to input\n", PIN);
+        gpio_free(PIN);
+        return result;
+    }
+    printk(KERN_INFO "Keyboard: First value: %i\n", gpio_get_value(PIN));
+    GPIO_IRQ = gpio_to_irq(PIN);
+    if (GPIO_IRQ < 0)
+    {
+        printk(KERN_ERR "Keyboard: Can't find corresponding IRQ\n");
+        gpio_free(PIN);
+        return GPIO_IRQ;
+    }
+    result = request_irq(GPIO_IRQ, interrupt, IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING, "Keyboard and joystick interrupt", interrupt);
+    if (result != 0)
+    {
+        printk(KERN_ERR "Keyboard: Can't allocate IRQ %d\n", GPIO_IRQ);
         gpio_free(PIN);
         return result;
     }
@@ -365,7 +394,7 @@ static int __init kb_mod_init(void)
     if (!input_device)
     {
         printk(KERN_ERR "Keyboard: Not enough memory\n");
-        free_irq(gpio_irq, (irq_handler_t)interrupt);
+        free_irq(GPIO_IRQ, interrupt);
         gpio_free(PIN);
         return -ENOMEM;
     }
@@ -379,24 +408,26 @@ static int __init kb_mod_init(void)
     {
         register_key(map_pin(i));
     }
+    // Register mouse button
+    register_key(BTN_LEFT);
     result = input_register_device(input_device);
     if (result != 0)
     {
         printk(KERN_ERR "Keyboard: Failed to register input device\n");
         input_free_device(input_device);
-        free_irq(gpio_irq, (irq_handler_t)interrupt);
+        free_irq(GPIO_IRQ, interrupt);
         gpio_free(PIN);
         return result;
     }
-    printk(KERN_INFO "Keyboard: Initialised\n");
     do_gettimeofday(&last);
+    printk(KERN_INFO "Keyboard: Initialised\n");
     return 0;
 }
 static void __exit kb_mod_exit(void)
 {
     printk(KERN_INFO "Keyboard: Releasing resources\n");
     input_unregister_device(input_device);
-    free_irq(gpio_irq, (irq_handler_t)interrupt);
+    free_irq(GPIO_IRQ, interrupt);
     gpio_free(PIN);
     printk(KERN_INFO "Keyboard: Exit\n");
 }

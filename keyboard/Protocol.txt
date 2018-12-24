@@ -2,6 +2,9 @@ Databyte d means:
 
 0-77: Key d down
 78-155 Key d - 78 up
+156: Button down
+157: Button up
+
 
 Keys:
 0:KEY_ESC
