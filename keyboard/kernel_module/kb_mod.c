@@ -10,8 +10,9 @@
 #include <asm/io.h>
 
 #define PIN 4
-#define BAUD 10000
+#define BAUD 2000
 #define PIN_MAX 77
+#define MOUSE_FACTOR 15
 const int bit_dur = 1000000 / BAUD;
 int GPIO_IRQ;
 struct timeval last;
@@ -218,14 +219,26 @@ static void set_key_state(int key, int state)
 }
 static void key_down(int pin)
 {
-    printk(KERN_INFO "Keyboard: keydown\n");
+    // printk(KERN_INFO "Keyboard: keydown\n");
     set_key_state(map_pin(pin), 1);
     input_sync(input_device);
 }
 static void key_up(int pin)
 {
-    printk(KERN_INFO "Keyboard: keyup\n");
+    // printk(KERN_INFO "Keyboard: keyup\n");
     set_key_state(map_pin(pin), 0);
+    input_sync(input_device);
+}
+static void tilt_x(int x)
+{
+    // printk(KERN_INFO "Keyboard: rel_x %i\n", x);
+    input_report_rel(input_device, REL_X, (x * MOUSE_FACTOR) / 100);
+    input_sync(input_device);
+}
+static void tilt_y(int y)
+{
+    // printk(KERN_INFO "Keyboard: rel_y %i\n", y);
+    input_report_rel(input_device, REL_Y, (y * MOUSE_FACTOR) / 100);
     input_sync(input_device);
 }
 static void data_received(void)
@@ -240,7 +253,8 @@ static void data_received(void)
     data += 64 * bits[6];
     data += 128 * bits[7];
     // HANDLE RECEIVED DATA
-    printk(KERN_INFO "Keyboard: %i\n", data);
+    // printk(KERN_INFO "Keyboard: %i\n", data);
+
     if (data <= 77)
     {
         key_down(data);
@@ -251,23 +265,23 @@ static void data_received(void)
     }
     else if (data == 156)
     {
-        printk(KERN_INFO "Keyboard: mouse button down\n");
+        // printk(KERN_INFO "Keyboard: mouse button down\n");
         set_key_state(BTN_LEFT, 1);
         input_sync(input_device);
     }
     else if (data == 157)
     {
-        printk(KERN_INFO "Keyboard: mouse button up\n");
+        // printk(KERN_INFO "Keyboard: mouse button up\n");
         set_key_state(BTN_LEFT, 0);
         input_sync(input_device);
     }
-    else if (data <= 224)
+    else if (data <= 206)
     {
-        // tilt_x(data - 209);
+        tilt_x(data - 182);
     }
     else
     {
-        // tilt_y(data - 240);
+        tilt_y(data - 231);
     }
 }
 static void rising(void)
@@ -328,6 +342,7 @@ static void falling(void)
         {
             // Error occured > abort receiving
             receiving = false;
+            // printk(KERN_INFO "Keyboard: malicious byte\n");
         }
         else
         {
@@ -398,8 +413,11 @@ static int __init kb_mod_init(void)
         gpio_free(PIN);
         return -ENOMEM;
     }
-    input_device->evbit[0] = BIT_MASK(EV_KEY);
-    input_device->evbit[0] |= BIT_MASK(EV_REP);
+    input_device->evbit[BIT_WORD(EV_KEY)] = BIT_MASK(EV_KEY);
+    input_device->evbit[BIT_WORD(EV_REP)] |= BIT_MASK(EV_REP);
+    input_device->evbit[BIT_WORD(EV_REL)] |= BIT_MASK(EV_REL);
+    input_device->relbit[BIT_WORD(REL_X)] = BIT_MASK(REL_X);
+    input_device->relbit[BIT_WORD(REL_Y)] |= BIT_MASK(REL_Y);
     input_device->name = "Pi-Book keyboard and joystick";
     input_device->id.bustype = BUS_RS232;
     input_device->id.version = 0;
