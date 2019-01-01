@@ -5,6 +5,7 @@
 #include <linux/gpio.h>
 #include <linux/interrupt.h>
 #include <linux/time.h>
+#include <linux/moduleparam.h>
 
 #include <asm/irq.h>
 #include <asm/io.h>
@@ -12,7 +13,12 @@
 #define PIN 4
 #define BAUD 2000
 #define PIN_MAX 77
-#define MOUSE_FACTOR 15
+
+// Declare mouse_factor as a module parameter
+static int mouse_factor = 15;
+module_param(mouse_factor, int, 0644);
+MODULE_PARM_DESC(mouse_factor, "Factor to scale the mouse movement.");
+
 const int bit_dur = 1000000 / BAUD;
 int GPIO_IRQ;
 struct timeval last;
@@ -27,6 +33,7 @@ MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Emil Schätzle");
 MODULE_DESCRIPTION("Driver for the PI-Book keyboard");
 MODULE_VERSION("0.01");
+// Calculates the time since the last call
 static int get_time_difference(void)
 {
     long long int time;
@@ -38,6 +45,7 @@ static int get_time_difference(void)
     last = now;
     return time;
 }
+// Calculates the bit durations passed since last call
 static int get_bit_durs(void)
 {
     int time;
@@ -46,6 +54,7 @@ static int get_bit_durs(void)
     total_bit_durs = (time + bit_dur / 2) / bit_dur;
     return total_bit_durs;
 }
+// Converts a received pin value to an LINUX Key Value
 static int map_pin(int pin)
 {
     switch (pin)
@@ -232,13 +241,13 @@ static void key_up(int pin)
 static void tilt_x(int x)
 {
     // printk(KERN_INFO "Keyboard: rel_x %i\n", x);
-    input_report_rel(input_device, REL_X, (x * MOUSE_FACTOR) / 100);
+    input_report_rel(input_device, REL_X, (x * mouse_factor) / 100);
     input_sync(input_device);
 }
 static void tilt_y(int y)
 {
     // printk(KERN_INFO "Keyboard: rel_y %i\n", y);
-    input_report_rel(input_device, REL_Y, (y * MOUSE_FACTOR) / 100);
+    input_report_rel(input_device, REL_Y, (y * mouse_factor) / 100);
     input_sync(input_device);
 }
 static void data_received(void)
@@ -357,6 +366,7 @@ static void falling(void)
 }
 static irqreturn_t interrupt(int irq, void *dev_id)
 {
+    // Is the interrupt a rising or a falling Edge?
     if (gpio_get_value(PIN))
     {
         rising();
@@ -371,7 +381,7 @@ static inline void register_key(int key)
 {
     input_device->keybit[BIT_WORD(key)] |= BIT_MASK(key);
 }
-static int __init kb_mod_init(void)
+static int __init pibook_hid_driver_init(void)
 {
     int result;
     int i;
@@ -441,7 +451,7 @@ static int __init kb_mod_init(void)
     printk(KERN_INFO "Keyboard: Initialised\n");
     return 0;
 }
-static void __exit kb_mod_exit(void)
+static void __exit pibook_hid_driver_exit(void)
 {
     printk(KERN_INFO "Keyboard: Releasing resources\n");
     input_unregister_device(input_device);
@@ -449,5 +459,5 @@ static void __exit kb_mod_exit(void)
     gpio_free(PIN);
     printk(KERN_INFO "Keyboard: Exit\n");
 }
-module_init(kb_mod_init);
-module_exit(kb_mod_exit);
+module_init(pibook_hid_driver_init);
+module_exit(pibook_hid_driver_exit);

@@ -9,7 +9,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-//volatile bool wait_over = false;
 volatile uint8_t LPINA, LPINB, LPINC, LPIND, LPINE, LPINH, LPINJ, LPINL, LPINK, LPING;
 volatile bool LBUTTON;
 
@@ -664,39 +663,52 @@ void set_initial_state()
 }
 int main(void)
 {
-    int i = 0;
     cli();
-    // Set up timer 2 for 20000 Hz (data transmission)
-    // Stopping the Timer
+    // Set up the systemclock to run at 500.000 Hz
+    CLKPR = (1 << CLKPCE);
+#if F_OSC == 8000000
+    CLKPR = (1 << CLKPS2);
+#elif F_OSC == 16000000
+    CLKPR = (1 << CLKPS2) | (1 << CLKPS0);
+#else
+#error "Invalid F_OSC"
+#endif
+
+    // Disable unused devices
+    PRR0 = (1 << PRTWI) | (1 << PRTIM1) | (1 << PRSPI) | (1 << PRUSART0);
+    PRR1 = (1 << PRTIM5) | (1 << PRTIM4) | (1 << PRTIM3) | (1 << PRUSART3) | (1 << PRUSART2) | (1 << PRUSART1);
+
+    // Set up timer 2 for 2000 Hz (data transmission)
+    // Stopping the timer
     TCCR2A = 0;
     TCCR2B = 0;
     // Set current value to 0
     TCNT2 = 0;
-    // Set bit every 125 cycles
-    OCR2A = 124;
-    // Set prescaler to 64
-    TCCR2B |= (1 << CS22);
+    // Set bit every 250 cycles
+    OCR2A = 249;
+    // Set no prescaler
+    TCCR2B |= (1 << CS20);
     // Activate CTC Mode
     TCCR2A |= (1 << WGM21);
 
     // Set up timer 0 for 62,5 Hz (joystick)
-    // Stopping the Timer
+    // Stopping the timer
     TCCR0A = 0;
     TCCR0B = 0;
     // Set the current value to 0
     TCNT0 = 0;
-    // Set bit every 250 cycles
-    OCR0A = 250;
-    // Set prescaler to 1024
-    TCCR0B |= (1 << CS02) | (1 << CS00);
+    // Set bit every 125 cycles
+    OCR0A = 124;
+    // Set prescaler to 64
+    TCCR0B |= (1 << CS01) | (1 << CS00);
     // Activate CTC Mode
     TCCR0A |= (1 << WGM01);
 
     // Set up ADC
     // Set reference voltage to Vcc
     ADMUX = (1 << REFS0);
-    // Set prescaler to 128
-    ADCSRA = (1 << ADEN) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
+    // Set prescaler to 4
+    ADCSRA = (1 << ADEN) | (1 << ADPS1);
     ADCSRB = 0;
 
     // Set up pins
@@ -729,8 +741,9 @@ int main(void)
     PORTG = 0x3F; // Enable pullup
 
     // Setup transmission and joystick pins
-    DDRF = (1 << PF0);  // PF0 for transmission, PF1 for RX, PF2 for RY, PF3 for button
-    PORTF = (1 << PF3); // Enable pullup for the button pin
+    DDRF = (1 << PF0);                                         // PF0 for transmission, PF1 for RX, PF2 for RY, PF3 for button
+    DDRF |= (1 << PF4) | (1 << PF5) | (1 << PF6) | (1 << PF7); //PF4-PF7 as OUTPUT (energy saving)
+    PORTF = (1 << PF3);                                        // Enable pullup for the button pin
 
     sei();
 
