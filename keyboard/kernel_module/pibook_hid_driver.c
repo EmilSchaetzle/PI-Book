@@ -14,6 +14,11 @@
 #define BAUD 2000
 #define PIN_MAX 77
 
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Emil Schätzle");
+MODULE_DESCRIPTION("Driver for the PI-Book keyboard");
+MODULE_VERSION("0.01");
+
 // Declare mouse_factor as a module parameter
 static int mouse_factor = 15;
 module_param(mouse_factor, int, 0644);
@@ -29,10 +34,6 @@ bool bits[8];
 
 static struct input_dev *input_device;
 
-MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Emil Schätzle");
-MODULE_DESCRIPTION("Driver for the PI-Book keyboard");
-MODULE_VERSION("0.01");
 // Calculates the time since the last call
 static int get_time_difference(void)
 {

@@ -1,7 +1,8 @@
 obj-m := pibook_hid_driver.o
+KVERSION := $(shell uname -r)
 
 all:
-	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
+	$(MAKE) -C /lib/modules/$(KVERSION)/build M=$(PWD) modules
 
 clean:
-	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
+	$(MAKE) -C /lib/modules/$(KVERSION)/build M=$(PWD) clean
