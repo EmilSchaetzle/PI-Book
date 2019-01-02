@@ -1,4 +1,4 @@
-obj-m := pibook_hid_driver.o
+obj-m := pibook-hid-driver.o
 KVERSION := $(shell uname -r)
 
 all:
