@@ -11,7 +11,7 @@
 #include <asm/io.h>
 
 #define PIN 4
-#define BAUD 2000
+#define BIT_DUR 504
 #define PIN_MAX 77
 
 MODULE_LICENSE("GPL");
@@ -24,7 +24,6 @@ static int mouse_factor = 15;
 module_param(mouse_factor, int, 0644);
 MODULE_PARM_DESC(mouse_factor, "Factor to scale the mouse movement.");
 
-const int bit_dur = 1000000 / BAUD;
 int GPIO_IRQ;
 struct timeval last;
 bool receiving = false;
@@ -41,19 +40,23 @@ static int get_time_difference(void)
     struct timeval now;
     do_gettimeofday(&now);
     time = now.tv_sec - last.tv_sec;
+    if (time < 0)
+    {
+        time += 86400;
+    }
     time *= 1000000;
     time += now.tv_usec - last.tv_usec;
     last = now;
     return time;
 }
 // Calculates the bit durations passed since last call
-static int get_bit_durs(void)
+static int get_BIT_DURs(void)
 {
     int time;
-    int total_bit_durs;
+    int total_BIT_DURs;
     time = get_time_difference();
-    total_bit_durs = (time + bit_dur / 2) / bit_dur;
-    return total_bit_durs;
+    total_BIT_DURs = (time + BIT_DUR / 2) / BIT_DUR;
+    return total_BIT_DURs;
 }
 // Converts a received pin value to an LINUX Key Value
 static int map_pin(int pin)
@@ -300,26 +303,26 @@ static void rising(void)
     {
         // Data is currently beeing received
         int i;
-        int bit_durs;
-        bit_durs = get_bit_durs();
+        int BIT_DURs;
+        BIT_DURs = get_BIT_DURs();
         // Ignore startbit
-        if (!start_bit_handled && bit_durs > 0)
+        if (!start_bit_handled && BIT_DURs > 0)
         {
-            bit_durs--;
+            BIT_DURs--;
             start_bit_handled = true;
         }
-        for (i = 0; i < bit_durs && i < 8; i++)
+        for (i = 0; i < BIT_DURs && i < 8; i++)
         {
             bits[received_bits + i] = false;
         }
-        if (received_bits + bit_durs > 8)
+        if (received_bits + BIT_DURs > 8)
         {
             // Error occured > abort receiving
             receiving = false;
         }
         else
         {
-            received_bits += bit_durs;
+            received_bits += BIT_DURs;
             if (received_bits == 8)
             {
                 receiving = false;
@@ -342,13 +345,13 @@ static void falling(void)
     {
         // Data is currently beeing received
         int i;
-        int bit_durs;
-        bit_durs = get_bit_durs();
-        for (i = 0; i < bit_durs && i < 8; i++)
+        int BIT_DURs;
+        BIT_DURs = get_BIT_DURs();
+        for (i = 0; i < BIT_DURs && i < 8; i++)
         {
             bits[received_bits + i] = true;
         }
-        if (received_bits + bit_durs > 8)
+        if (received_bits + BIT_DURs > 8)
         {
             // Error occured > abort receiving
             receiving = false;
@@ -356,7 +359,7 @@ static void falling(void)
         }
         else
         {
-            received_bits += bit_durs;
+            received_bits += BIT_DURs;
             if (received_bits == 8)
             {
                 receiving = false;

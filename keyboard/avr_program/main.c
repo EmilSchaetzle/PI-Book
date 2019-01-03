@@ -230,404 +230,434 @@ void send_initial_state()
 
 void refresh_state()
 {
-    if ((PINA & (1 << PA0)) != (LPINA & (1 << PA0)))
+    if (PINA != LPINA)
     {
-        send_key_state(0x00, (PINA & (1 << PA0)));
-        LPINA ^= 1 << PA0;
-    }
-    if ((PINA & (1 << PA1)) != (LPINA & (1 << PA1)))
-    {
-        send_key_state(0x01, (PINA & (1 << PA1)));
-        LPINA ^= 1 << PA1;
-    }
-    if ((PINA & (1 << PA2)) != (LPINA & (1 << PA2)))
-    {
-        send_key_state(0x02, (PINA & (1 << PA2)));
-        LPINA ^= 1 << PA2;
-    }
-    if ((PINA & (1 << PA3)) != (LPINA & (1 << PA3)))
-    {
-        send_key_state(0x03, (PINA & (1 << PA3)));
-        LPINA ^= 1 << PA3;
-    }
-    if ((PINA & (1 << PA4)) != (LPINA & (1 << PA4)))
-    {
-        send_key_state(0x04, (PINA & (1 << PA4)));
-        LPINA ^= 1 << PA4;
-    }
-    if ((PINA & (1 << PA5)) != (LPINA & (1 << PA5)))
-    {
-        send_key_state(0x05, (PINA & (1 << PA5)));
-        LPINA ^= 1 << PA5;
-    }
-    if ((PINA & (1 << PA6)) != (LPINA & (1 << PA6)))
-    {
-        send_key_state(0x06, (PINA & (1 << PA6)));
-        LPINA ^= 1 << PA6;
-    }
-    if ((PINA & (1 << PA7)) != (LPINA & (1 << PA7)))
-    {
-        send_key_state(0x07, (PINA & (1 << PA7)));
-        LPINA ^= 1 << PA7;
-    }
-
-    if ((PINB & (1 << PB0)) != (LPINB & (1 << PB0)))
-    {
-        send_key_state(0x08, (PINB & (1 << PB0)));
-        LPINB ^= 1 << PB0;
-    }
-    if ((PINB & (1 << PB1)) != (LPINB & (1 << PB1)))
-    {
-        send_key_state(0x09, (PINB & (1 << PB1)));
-        LPINB ^= 1 << PB1;
-    }
-    if ((PINB & (1 << PB2)) != (LPINB & (1 << PB2)))
-    {
-        send_key_state(0x0A, (PINB & (1 << PB2)));
-        LPINB ^= 1 << PB2;
-    }
-    if ((PINB & (1 << PB3)) != (LPINB & (1 << PB3)))
-    {
-        send_key_state(0x0B, (PINB & (1 << PB3)));
-        LPINB ^= 1 << PB3;
-    }
-    if ((PINB & (1 << PB4)) != (LPINB & (1 << PB4)))
-    {
-        send_key_state(0x0C, (PINB & (1 << PB4)));
-        LPINB ^= 1 << PB4;
-    }
-    if ((PINB & (1 << PB5)) != (LPINB & (1 << PB5)))
-    {
-        send_key_state(0x0D, (PINB & (1 << PB5)));
-        LPINB ^= 1 << PB5;
-    }
-    if ((PINB & (1 << PB6)) != (LPINB & (1 << PB6)))
-    {
-        send_key_state(0x0E, (PINB & (1 << PB6)));
-        LPINB ^= 1 << PB6;
-    }
-    if ((PINB & (1 << PB7)) != (LPINB & (1 << PB7)))
-    {
-        send_key_state(0x0F, (PINB & (1 << PB7)));
-        LPINB ^= 1 << PB7;
+        if ((PINA & (1 << PA0)) != (LPINA & (1 << PA0)))
+        {
+            send_key_state(0x00, (PINA & (1 << PA0)));
+            LPINA ^= 1 << PA0;
+        }
+        if ((PINA & (1 << PA1)) != (LPINA & (1 << PA1)))
+        {
+            send_key_state(0x01, (PINA & (1 << PA1)));
+            LPINA ^= 1 << PA1;
+        }
+        if ((PINA & (1 << PA2)) != (LPINA & (1 << PA2)))
+        {
+            send_key_state(0x02, (PINA & (1 << PA2)));
+            LPINA ^= 1 << PA2;
+        }
+        if ((PINA & (1 << PA3)) != (LPINA & (1 << PA3)))
+        {
+            send_key_state(0x03, (PINA & (1 << PA3)));
+            LPINA ^= 1 << PA3;
+        }
+        if ((PINA & (1 << PA4)) != (LPINA & (1 << PA4)))
+        {
+            send_key_state(0x04, (PINA & (1 << PA4)));
+            LPINA ^= 1 << PA4;
+        }
+        if ((PINA & (1 << PA5)) != (LPINA & (1 << PA5)))
+        {
+            send_key_state(0x05, (PINA & (1 << PA5)));
+            LPINA ^= 1 << PA5;
+        }
+        if ((PINA & (1 << PA6)) != (LPINA & (1 << PA6)))
+        {
+            send_key_state(0x06, (PINA & (1 << PA6)));
+            LPINA ^= 1 << PA6;
+        }
+        if ((PINA & (1 << PA7)) != (LPINA & (1 << PA7)))
+        {
+            send_key_state(0x07, (PINA & (1 << PA7)));
+            LPINA ^= 1 << PA7;
+        }
     }
 
-    if ((PINC & (1 << PC0)) != (LPINC & (1 << PC0)))
+    if (PINB != LPINB)
     {
-        send_key_state(0x10, (PINC & (1 << PC0)));
-        LPINC ^= 1 << PC0;
-    }
-    if ((PINC & (1 << PC1)) != (LPINC & (1 << PC1)))
-    {
-        send_key_state(0x11, (PINC & (1 << PC1)));
-        LPINC ^= 1 << PC1;
-    }
-    if ((PINC & (1 << PC2)) != (LPINC & (1 << PC2)))
-    {
-        send_key_state(0x12, (PINC & (1 << PC2)));
-        LPINC ^= 1 << PC2;
-    }
-    if ((PINC & (1 << PC3)) != (LPINC & (1 << PC3)))
-    {
-        send_key_state(0x13, (PINC & (1 << PC3)));
-        LPINC ^= 1 << PC3;
-    }
-    if ((PINC & (1 << PC4)) != (LPINC & (1 << PC4)))
-    {
-        send_key_state(0x14, (PINC & (1 << PC4)));
-        LPINC ^= 1 << PC4;
-    }
-    if ((PINC & (1 << PC5)) != (LPINC & (1 << PC5)))
-    {
-        send_key_state(0x15, (PINC & (1 << PC5)));
-        LPINC ^= 1 << PC5;
-    }
-    if ((PINC & (1 << PC6)) != (LPINC & (1 << PC6)))
-    {
-        send_key_state(0x16, (PINC & (1 << PC6)));
-        LPINC ^= 1 << PC6;
-    }
-    if ((PINC & (1 << PC7)) != (LPINC & (1 << PC7)))
-    {
-        send_key_state(0x17, (PINC & (1 << PC7)));
-        LPINC ^= 1 << PC7;
-    }
-
-    if ((PIND & (1 << PD0)) != (LPIND & (1 << PD0)))
-    {
-        send_key_state(0x18, (PIND & (1 << PD0)));
-        LPIND ^= 1 << PD0;
-    }
-    if ((PIND & (1 << PD1)) != (LPIND & (1 << PD1)))
-    {
-        send_key_state(0x19, (PIND & (1 << PD1)));
-        LPIND ^= 1 << PD1;
-    }
-    if ((PIND & (1 << PD2)) != (LPIND & (1 << PD2)))
-    {
-        send_key_state(0x1A, (PIND & (1 << PD2)));
-        LPIND ^= 1 << PD2;
-    }
-    if ((PIND & (1 << PD3)) != (LPIND & (1 << PD3)))
-    {
-        send_key_state(0x1B, (PIND & (1 << PD3)));
-        LPIND ^= 1 << PD3;
-    }
-    if ((PIND & (1 << PD4)) != (LPIND & (1 << PD4)))
-    {
-        send_key_state(0x1C, (PIND & (1 << PD4)));
-        LPIND ^= 1 << PD4;
-    }
-    if ((PIND & (1 << PD5)) != (LPIND & (1 << PD5)))
-    {
-        send_key_state(0x1D, (PIND & (1 << PD5)));
-        LPIND ^= 1 << PD5;
-    }
-    if ((PIND & (1 << PD6)) != (LPIND & (1 << PD6)))
-    {
-        send_key_state(0x1E, (PIND & (1 << PD6)));
-        LPIND ^= 1 << PD6;
-    }
-    if ((PIND & (1 << PD7)) != (LPIND & (1 << PD7)))
-    {
-        send_key_state(0x1F, (PIND & (1 << PD7)));
-        LPIND ^= 1 << PD7;
+        if ((PINB & (1 << PB0)) != (LPINB & (1 << PB0)))
+        {
+            send_key_state(0x08, (PINB & (1 << PB0)));
+            LPINB ^= 1 << PB0;
+        }
+        if ((PINB & (1 << PB1)) != (LPINB & (1 << PB1)))
+        {
+            send_key_state(0x09, (PINB & (1 << PB1)));
+            LPINB ^= 1 << PB1;
+        }
+        if ((PINB & (1 << PB2)) != (LPINB & (1 << PB2)))
+        {
+            send_key_state(0x0A, (PINB & (1 << PB2)));
+            LPINB ^= 1 << PB2;
+        }
+        if ((PINB & (1 << PB3)) != (LPINB & (1 << PB3)))
+        {
+            send_key_state(0x0B, (PINB & (1 << PB3)));
+            LPINB ^= 1 << PB3;
+        }
+        if ((PINB & (1 << PB4)) != (LPINB & (1 << PB4)))
+        {
+            send_key_state(0x0C, (PINB & (1 << PB4)));
+            LPINB ^= 1 << PB4;
+        }
+        if ((PINB & (1 << PB5)) != (LPINB & (1 << PB5)))
+        {
+            send_key_state(0x0D, (PINB & (1 << PB5)));
+            LPINB ^= 1 << PB5;
+        }
+        if ((PINB & (1 << PB6)) != (LPINB & (1 << PB6)))
+        {
+            send_key_state(0x0E, (PINB & (1 << PB6)));
+            LPINB ^= 1 << PB6;
+        }
+        if ((PINB & (1 << PB7)) != (LPINB & (1 << PB7)))
+        {
+            send_key_state(0x0F, (PINB & (1 << PB7)));
+            LPINB ^= 1 << PB7;
+        }
     }
 
-    if ((PINE & (1 << PE0)) != (LPINE & (1 << PE0)))
+    if (PINC != LPINC)
     {
-        send_key_state(0x20, (PINE & (1 << PE0)));
-        LPINE ^= 1 << PE0;
-    }
-    if ((PINE & (1 << PE1)) != (LPINE & (1 << PE1)))
-    {
-        send_key_state(0x21, (PINE & (1 << PE1)));
-        LPINE ^= 1 << PE1;
-    }
-    if ((PINE & (1 << PE2)) != (LPINE & (1 << PE2)))
-    {
-        send_key_state(0x22, (PINE & (1 << PE2)));
-        LPINE ^= 1 << PE2;
-    }
-    if ((PINE & (1 << PE3)) != (LPINE & (1 << PE3)))
-    {
-        send_key_state(0x23, (PINE & (1 << PE3)));
-        LPINE ^= 1 << PE3;
-    }
-    if ((PINE & (1 << PE4)) != (LPINE & (1 << PE4)))
-    {
-        send_key_state(0x24, (PINE & (1 << PE4)));
-        LPINE ^= 1 << PE4;
-    }
-    if ((PINE & (1 << PE5)) != (LPINE & (1 << PE5)))
-    {
-        send_key_state(0x25, (PINE & (1 << PE5)));
-        LPINE ^= 1 << PE5;
-    }
-    if ((PINE & (1 << PE6)) != (LPINE & (1 << PE6)))
-    {
-        send_key_state(0x26, (PINE & (1 << PE6)));
-        LPINE ^= 1 << PE6;
-    }
-    if ((PINE & (1 << PE7)) != (LPINE & (1 << PE7)))
-    {
-        send_key_state(0x27, (PINE & (1 << PE7)));
-        LPINE ^= 1 << PE7;
-    }
-
-    if ((PINH & (1 << PH0)) != (LPINH & (1 << PH0)))
-    {
-        send_key_state(0x28, (PINH & (1 << PH0)));
-        LPINH ^= 1 << PH0;
-    }
-    if ((PINH & (1 << PH1)) != (LPINH & (1 << PH1)))
-    {
-        send_key_state(0x29, (PINH & (1 << PH1)));
-        LPINH ^= 1 << PH1;
-    }
-    if ((PINH & (1 << PH2)) != (LPINH & (1 << PH2)))
-    {
-        send_key_state(0x2A, (PINH & (1 << PH2)));
-        LPINH ^= 1 << PH2;
-    }
-    if ((PINH & (1 << PH3)) != (LPINH & (1 << PH3)))
-    {
-        send_key_state(0x2B, (PINH & (1 << PH3)));
-        LPINH ^= 1 << PH3;
-    }
-    if ((PINH & (1 << PH4)) != (LPINH & (1 << PH4)))
-    {
-        send_key_state(0x2C, (PINH & (1 << PH4)));
-        LPINH ^= 1 << PH4;
-    }
-    if ((PINH & (1 << PH5)) != (LPINH & (1 << PH5)))
-    {
-        send_key_state(0x2D, (PINH & (1 << PH5)));
-        LPINH ^= 1 << PH5;
-    }
-    if ((PINH & (1 << PH6)) != (LPINH & (1 << PH6)))
-    {
-        send_key_state(0x2E, (PINH & (1 << PH6)));
-        LPINH ^= 1 << PH6;
-    }
-    if ((PINH & (1 << PH7)) != (LPINH & (1 << PH7)))
-    {
-        send_key_state(0x2F, (PINH & (1 << PH7)));
-        LPINH ^= 1 << PH7;
+        if ((PINC & (1 << PC0)) != (LPINC & (1 << PC0)))
+        {
+            send_key_state(0x10, (PINC & (1 << PC0)));
+            LPINC ^= 1 << PC0;
+        }
+        if ((PINC & (1 << PC1)) != (LPINC & (1 << PC1)))
+        {
+            send_key_state(0x11, (PINC & (1 << PC1)));
+            LPINC ^= 1 << PC1;
+        }
+        if ((PINC & (1 << PC2)) != (LPINC & (1 << PC2)))
+        {
+            send_key_state(0x12, (PINC & (1 << PC2)));
+            LPINC ^= 1 << PC2;
+        }
+        if ((PINC & (1 << PC3)) != (LPINC & (1 << PC3)))
+        {
+            send_key_state(0x13, (PINC & (1 << PC3)));
+            LPINC ^= 1 << PC3;
+        }
+        if ((PINC & (1 << PC4)) != (LPINC & (1 << PC4)))
+        {
+            send_key_state(0x14, (PINC & (1 << PC4)));
+            LPINC ^= 1 << PC4;
+        }
+        if ((PINC & (1 << PC5)) != (LPINC & (1 << PC5)))
+        {
+            send_key_state(0x15, (PINC & (1 << PC5)));
+            LPINC ^= 1 << PC5;
+        }
+        if ((PINC & (1 << PC6)) != (LPINC & (1 << PC6)))
+        {
+            send_key_state(0x16, (PINC & (1 << PC6)));
+            LPINC ^= 1 << PC6;
+        }
+        if ((PINC & (1 << PC7)) != (LPINC & (1 << PC7)))
+        {
+            send_key_state(0x17, (PINC & (1 << PC7)));
+            LPINC ^= 1 << PC7;
+        }
     }
 
-    if ((PINJ & (1 << PJ0)) != (LPINJ & (1 << PJ0)))
+    if (PIND != LPIND)
     {
-        send_key_state(0x30, (PINJ & (1 << PJ0)));
-        LPINJ ^= 1 << PJ0;
-    }
-    if ((PINJ & (1 << PJ1)) != (LPINJ & (1 << PJ1)))
-    {
-        send_key_state(0x31, (PINJ & (1 << PJ1)));
-        LPINJ ^= 1 << PJ1;
-    }
-    if ((PINJ & (1 << PJ2)) != (LPINJ & (1 << PJ2)))
-    {
-        send_key_state(0x32, (PINJ & (1 << PJ2)));
-        LPINJ ^= 1 << PJ2;
-    }
-    if ((PINJ & (1 << PJ3)) != (LPINJ & (1 << PJ3)))
-    {
-        send_key_state(0x33, (PINJ & (1 << PJ3)));
-        LPINJ ^= 1 << PJ3;
-    }
-    if ((PINJ & (1 << PJ4)) != (LPINJ & (1 << PJ4)))
-    {
-        send_key_state(0x34, (PINJ & (1 << PJ4)));
-        LPINJ ^= 1 << PJ4;
-    }
-    if ((PINJ & (1 << PJ5)) != (LPINJ & (1 << PJ5)))
-    {
-        send_key_state(0x35, (PINJ & (1 << PJ5)));
-        LPINJ ^= 1 << PJ5;
-    }
-    if ((PINJ & (1 << PJ6)) != (LPINJ & (1 << PJ6)))
-    {
-        send_key_state(0x36, (PINJ & (1 << PJ6)));
-        LPINJ ^= 1 << PJ6;
-    }
-    if ((PINJ & (1 << PJ7)) != (LPINJ & (1 << PJ7)))
-    {
-        send_key_state(0x37, (PINJ & (1 << PJ7)));
-        LPINJ ^= 1 << PJ7;
-    }
-
-    if ((PINL & (1 << PL0)) != (LPINL & (1 << PL0)))
-    {
-        send_key_state(0x38, (PINL & (1 << PL0)));
-        LPINL ^= 1 << PL0;
-    }
-    if ((PINL & (1 << PL1)) != (LPINL & (1 << PL1)))
-    {
-        send_key_state(0x39, (PINL & (1 << PL1)));
-        LPINL ^= 1 << PL1;
-    }
-    if ((PINL & (1 << PL2)) != (LPINL & (1 << PL2)))
-    {
-        send_key_state(0x3A, (PINL & (1 << PL2)));
-        LPINL ^= 1 << PL2;
-    }
-    if ((PINL & (1 << PL3)) != (LPINL & (1 << PL3)))
-    {
-        send_key_state(0x3B, (PINL & (1 << PL3)));
-        LPINL ^= 1 << PL3;
-    }
-    if ((PINL & (1 << PL4)) != (LPINL & (1 << PL4)))
-    {
-        send_key_state(0x3C, (PINL & (1 << PL4)));
-        LPINL ^= 1 << PL4;
-    }
-    if ((PINL & (1 << PL5)) != (LPINL & (1 << PL5)))
-    {
-        send_key_state(0x3D, (PINL & (1 << PL5)));
-        LPINL ^= 1 << PL5;
-    }
-    if ((PINL & (1 << PL6)) != (LPINL & (1 << PL6)))
-    {
-        send_key_state(0x3E, (PINL & (1 << PL6)));
-        LPINL ^= 1 << PL6;
-    }
-    if ((PINL & (1 << PL7)) != (LPINL & (1 << PL7)))
-    {
-        send_key_state(0x3F, (PINL & (1 << PL7)));
-        LPINL ^= 1 << PL7;
+        if ((PIND & (1 << PD0)) != (LPIND & (1 << PD0)))
+        {
+            send_key_state(0x18, (PIND & (1 << PD0)));
+            LPIND ^= 1 << PD0;
+        }
+        if ((PIND & (1 << PD1)) != (LPIND & (1 << PD1)))
+        {
+            send_key_state(0x19, (PIND & (1 << PD1)));
+            LPIND ^= 1 << PD1;
+        }
+        if ((PIND & (1 << PD2)) != (LPIND & (1 << PD2)))
+        {
+            send_key_state(0x1A, (PIND & (1 << PD2)));
+            LPIND ^= 1 << PD2;
+        }
+        if ((PIND & (1 << PD3)) != (LPIND & (1 << PD3)))
+        {
+            send_key_state(0x1B, (PIND & (1 << PD3)));
+            LPIND ^= 1 << PD3;
+        }
+        if ((PIND & (1 << PD4)) != (LPIND & (1 << PD4)))
+        {
+            send_key_state(0x1C, (PIND & (1 << PD4)));
+            LPIND ^= 1 << PD4;
+        }
+        if ((PIND & (1 << PD5)) != (LPIND & (1 << PD5)))
+        {
+            send_key_state(0x1D, (PIND & (1 << PD5)));
+            LPIND ^= 1 << PD5;
+        }
+        if ((PIND & (1 << PD6)) != (LPIND & (1 << PD6)))
+        {
+            send_key_state(0x1E, (PIND & (1 << PD6)));
+            LPIND ^= 1 << PD6;
+        }
+        if ((PIND & (1 << PD7)) != (LPIND & (1 << PD7)))
+        {
+            send_key_state(0x1F, (PIND & (1 << PD7)));
+            LPIND ^= 1 << PD7;
+        }
     }
 
-    if ((PINK & (1 << PK0)) != (LPINK & (1 << PK0)))
+    if (PINE != LPINE)
     {
-        send_key_state(0x40, (PINK & (1 << PK0)));
-        LPINK ^= 1 << PK0;
-    }
-    if ((PINK & (1 << PK1)) != (LPINK & (1 << PK1)))
-    {
-        send_key_state(0x41, (PINK & (1 << PK1)));
-        LPINK ^= 1 << PK1;
-    }
-    if ((PINK & (1 << PK2)) != (LPINK & (1 << PK2)))
-    {
-        send_key_state(0x42, (PINK & (1 << PK2)));
-        LPINK ^= 1 << PK2;
-    }
-    if ((PINK & (1 << PK3)) != (LPINK & (1 << PK3)))
-    {
-        send_key_state(0x43, (PINK & (1 << PK3)));
-        LPINK ^= 1 << PK3;
-    }
-    if ((PINK & (1 << PK4)) != (LPINK & (1 << PK4)))
-    {
-        send_key_state(0x44, (PINK & (1 << PK4)));
-        LPINK ^= 1 << PK4;
-    }
-    if ((PINK & (1 << PK5)) != (LPINK & (1 << PK5)))
-    {
-        send_key_state(0x45, (PINK & (1 << PK5)));
-        LPINK ^= 1 << PK5;
-    }
-    if ((PINK & (1 << PK6)) != (LPINK & (1 << PK6)))
-    {
-        send_key_state(0x46, (PINK & (1 << PK6)));
-        LPINK ^= 1 << PK6;
-    }
-    if ((PINK & (1 << PK7)) != (LPINK & (1 << PK7)))
-    {
-        send_key_state(0x47, (PINK & (1 << PK7)));
-        LPINK ^= 1 << PK7;
+        if ((PINE & (1 << PE0)) != (LPINE & (1 << PE0)))
+        {
+            send_key_state(0x20, (PINE & (1 << PE0)));
+            LPINE ^= 1 << PE0;
+        }
+        if ((PINE & (1 << PE1)) != (LPINE & (1 << PE1)))
+        {
+            send_key_state(0x21, (PINE & (1 << PE1)));
+            LPINE ^= 1 << PE1;
+        }
+        if ((PINE & (1 << PE2)) != (LPINE & (1 << PE2)))
+        {
+            send_key_state(0x22, (PINE & (1 << PE2)));
+            LPINE ^= 1 << PE2;
+        }
+        if ((PINE & (1 << PE3)) != (LPINE & (1 << PE3)))
+        {
+            send_key_state(0x23, (PINE & (1 << PE3)));
+            LPINE ^= 1 << PE3;
+        }
+        if ((PINE & (1 << PE4)) != (LPINE & (1 << PE4)))
+        {
+            send_key_state(0x24, (PINE & (1 << PE4)));
+            LPINE ^= 1 << PE4;
+        }
+        if ((PINE & (1 << PE5)) != (LPINE & (1 << PE5)))
+        {
+            send_key_state(0x25, (PINE & (1 << PE5)));
+            LPINE ^= 1 << PE5;
+        }
+        if ((PINE & (1 << PE6)) != (LPINE & (1 << PE6)))
+        {
+            send_key_state(0x26, (PINE & (1 << PE6)));
+            LPINE ^= 1 << PE6;
+        }
+        if ((PINE & (1 << PE7)) != (LPINE & (1 << PE7)))
+        {
+            send_key_state(0x27, (PINE & (1 << PE7)));
+            LPINE ^= 1 << PE7;
+        }
     }
 
-    if ((PING & (1 << PG0)) != (LPING & (1 << PG0)))
+    if (PINH != LPINH)
     {
-        send_key_state(0x48, (PING & (1 << PG0)));
-        LPING ^= 1 << PG0;
+        if ((PINH & (1 << PH0)) != (LPINH & (1 << PH0)))
+        {
+            send_key_state(0x28, (PINH & (1 << PH0)));
+            LPINH ^= 1 << PH0;
+        }
+        if ((PINH & (1 << PH1)) != (LPINH & (1 << PH1)))
+        {
+            send_key_state(0x29, (PINH & (1 << PH1)));
+            LPINH ^= 1 << PH1;
+        }
+        if ((PINH & (1 << PH2)) != (LPINH & (1 << PH2)))
+        {
+            send_key_state(0x2A, (PINH & (1 << PH2)));
+            LPINH ^= 1 << PH2;
+        }
+        if ((PINH & (1 << PH3)) != (LPINH & (1 << PH3)))
+        {
+            send_key_state(0x2B, (PINH & (1 << PH3)));
+            LPINH ^= 1 << PH3;
+        }
+        if ((PINH & (1 << PH4)) != (LPINH & (1 << PH4)))
+        {
+            send_key_state(0x2C, (PINH & (1 << PH4)));
+            LPINH ^= 1 << PH4;
+        }
+        if ((PINH & (1 << PH5)) != (LPINH & (1 << PH5)))
+        {
+            send_key_state(0x2D, (PINH & (1 << PH5)));
+            LPINH ^= 1 << PH5;
+        }
+        if ((PINH & (1 << PH6)) != (LPINH & (1 << PH6)))
+        {
+            send_key_state(0x2E, (PINH & (1 << PH6)));
+            LPINH ^= 1 << PH6;
+        }
+        if ((PINH & (1 << PH7)) != (LPINH & (1 << PH7)))
+        {
+            send_key_state(0x2F, (PINH & (1 << PH7)));
+            LPINH ^= 1 << PH7;
+        }
     }
-    if ((PING & (1 << PG1)) != (LPING & (1 << PG1)))
+
+    if (PINJ != LPINJ)
     {
-        send_key_state(0x49, (PING & (1 << PG1)));
-        LPING ^= 1 << PG1;
+        if ((PINJ & (1 << PJ0)) != (LPINJ & (1 << PJ0)))
+        {
+            send_key_state(0x30, (PINJ & (1 << PJ0)));
+            LPINJ ^= 1 << PJ0;
+        }
+        if ((PINJ & (1 << PJ1)) != (LPINJ & (1 << PJ1)))
+        {
+            send_key_state(0x31, (PINJ & (1 << PJ1)));
+            LPINJ ^= 1 << PJ1;
+        }
+        if ((PINJ & (1 << PJ2)) != (LPINJ & (1 << PJ2)))
+        {
+            send_key_state(0x32, (PINJ & (1 << PJ2)));
+            LPINJ ^= 1 << PJ2;
+        }
+        if ((PINJ & (1 << PJ3)) != (LPINJ & (1 << PJ3)))
+        {
+            send_key_state(0x33, (PINJ & (1 << PJ3)));
+            LPINJ ^= 1 << PJ3;
+        }
+        if ((PINJ & (1 << PJ4)) != (LPINJ & (1 << PJ4)))
+        {
+            send_key_state(0x34, (PINJ & (1 << PJ4)));
+            LPINJ ^= 1 << PJ4;
+        }
+        if ((PINJ & (1 << PJ5)) != (LPINJ & (1 << PJ5)))
+        {
+            send_key_state(0x35, (PINJ & (1 << PJ5)));
+            LPINJ ^= 1 << PJ5;
+        }
+        if ((PINJ & (1 << PJ6)) != (LPINJ & (1 << PJ6)))
+        {
+            send_key_state(0x36, (PINJ & (1 << PJ6)));
+            LPINJ ^= 1 << PJ6;
+        }
+        if ((PINJ & (1 << PJ7)) != (LPINJ & (1 << PJ7)))
+        {
+            send_key_state(0x37, (PINJ & (1 << PJ7)));
+            LPINJ ^= 1 << PJ7;
+        }
     }
-    if ((PING & (1 << PG2)) != (LPING & (1 << PG2)))
+
+    if (PINL != LPINL)
     {
-        send_key_state(0x4A, (PING & (1 << PG2)));
-        LPING ^= 1 << PG2;
+        if ((PINL & (1 << PL0)) != (LPINL & (1 << PL0)))
+        {
+            send_key_state(0x38, (PINL & (1 << PL0)));
+            LPINL ^= 1 << PL0;
+        }
+        if ((PINL & (1 << PL1)) != (LPINL & (1 << PL1)))
+        {
+            send_key_state(0x39, (PINL & (1 << PL1)));
+            LPINL ^= 1 << PL1;
+        }
+        if ((PINL & (1 << PL2)) != (LPINL & (1 << PL2)))
+        {
+            send_key_state(0x3A, (PINL & (1 << PL2)));
+            LPINL ^= 1 << PL2;
+        }
+        if ((PINL & (1 << PL3)) != (LPINL & (1 << PL3)))
+        {
+            send_key_state(0x3B, (PINL & (1 << PL3)));
+            LPINL ^= 1 << PL3;
+        }
+        if ((PINL & (1 << PL4)) != (LPINL & (1 << PL4)))
+        {
+            send_key_state(0x3C, (PINL & (1 << PL4)));
+            LPINL ^= 1 << PL4;
+        }
+        if ((PINL & (1 << PL5)) != (LPINL & (1 << PL5)))
+        {
+            send_key_state(0x3D, (PINL & (1 << PL5)));
+            LPINL ^= 1 << PL5;
+        }
+        if ((PINL & (1 << PL6)) != (LPINL & (1 << PL6)))
+        {
+            send_key_state(0x3E, (PINL & (1 << PL6)));
+            LPINL ^= 1 << PL6;
+        }
+        if ((PINL & (1 << PL7)) != (LPINL & (1 << PL7)))
+        {
+            send_key_state(0x3F, (PINL & (1 << PL7)));
+            LPINL ^= 1 << PL7;
+        }
     }
-    if ((PING & (1 << PG3)) != (LPING & (1 << PG3)))
+
+    if (PINK != LPINK)
     {
-        send_key_state(0x4B, (PING & (1 << PG3)));
-        LPING ^= 1 << PG3;
+        if ((PINK & (1 << PK0)) != (LPINK & (1 << PK0)))
+        {
+            send_key_state(0x40, (PINK & (1 << PK0)));
+            LPINK ^= 1 << PK0;
+        }
+        if ((PINK & (1 << PK1)) != (LPINK & (1 << PK1)))
+        {
+            send_key_state(0x41, (PINK & (1 << PK1)));
+            LPINK ^= 1 << PK1;
+        }
+        if ((PINK & (1 << PK2)) != (LPINK & (1 << PK2)))
+        {
+            send_key_state(0x42, (PINK & (1 << PK2)));
+            LPINK ^= 1 << PK2;
+        }
+        if ((PINK & (1 << PK3)) != (LPINK & (1 << PK3)))
+        {
+            send_key_state(0x43, (PINK & (1 << PK3)));
+            LPINK ^= 1 << PK3;
+        }
+        if ((PINK & (1 << PK4)) != (LPINK & (1 << PK4)))
+        {
+            send_key_state(0x44, (PINK & (1 << PK4)));
+            LPINK ^= 1 << PK4;
+        }
+        if ((PINK & (1 << PK5)) != (LPINK & (1 << PK5)))
+        {
+            send_key_state(0x45, (PINK & (1 << PK5)));
+            LPINK ^= 1 << PK5;
+        }
+        if ((PINK & (1 << PK6)) != (LPINK & (1 << PK6)))
+        {
+            send_key_state(0x46, (PINK & (1 << PK6)));
+            LPINK ^= 1 << PK6;
+        }
+        if ((PINK & (1 << PK7)) != (LPINK & (1 << PK7)))
+        {
+            send_key_state(0x47, (PINK & (1 << PK7)));
+            LPINK ^= 1 << PK7;
+        }
     }
-    if ((PING & (1 << PG4)) != (LPING & (1 << PG4)))
+
+    if (PING != LPING)
     {
-        send_key_state(0x4C, (PING & (1 << PG4)));
-        LPING ^= 1 << PG4;
-    }
-    if ((PING & (1 << PG5)) != (LPING & (1 << PG5)))
-    {
-        send_key_state(0x4D, (PING & (1 << PG5)));
-        LPING ^= 1 << PG5;
+        if ((PING & (1 << PG0)) != (LPING & (1 << PG0)))
+        {
+            send_key_state(0x48, (PING & (1 << PG0)));
+            LPING ^= 1 << PG0;
+        }
+        if ((PING & (1 << PG1)) != (LPING & (1 << PG1)))
+        {
+            send_key_state(0x49, (PING & (1 << PG1)));
+            LPING ^= 1 << PG1;
+        }
+        if ((PING & (1 << PG2)) != (LPING & (1 << PG2)))
+        {
+            send_key_state(0x4A, (PING & (1 << PG2)));
+            LPING ^= 1 << PG2;
+        }
+        if ((PING & (1 << PG3)) != (LPING & (1 << PG3)))
+        {
+            send_key_state(0x4B, (PING & (1 << PG3)));
+            LPING ^= 1 << PG3;
+        }
+        if ((PING & (1 << PG4)) != (LPING & (1 << PG4)))
+        {
+            send_key_state(0x4C, (PING & (1 << PG4)));
+            LPING ^= 1 << PG4;
+        }
+        if ((PING & (1 << PG5)) != (LPING & (1 << PG5)))
+        {
+            send_key_state(0x4D, (PING & (1 << PG5)));
+            LPING ^= 1 << PG5;
+        }
     }
 
     if (((PINF & (1 << PF3)) != 0) != LBUTTON)
@@ -664,12 +694,12 @@ void set_initial_state()
 int main(void)
 {
     cli();
-    // Set up the systemclock to run at 500.000 Hz
+    // Set up the systemclock to run at 125.000 Hz
     CLKPR = (1 << CLKPCE);
 #if F_OSC == 8000000
-    CLKPR = (1 << CLKPS2);
+    CLKPR = (1 << CLKPS2) | (1 << CLKPS1);
 #elif F_OSC == 16000000
-    CLKPR = (1 << CLKPS2) | (1 << CLKPS0);
+    CLKPR = (1 << CLKPS2) | (1 << CLKPS1) | (1 << CLKPS0);
 #else
 #error "Invalid F_OSC"
 #endif
@@ -678,18 +708,18 @@ int main(void)
     PRR0 = (1 << PRTWI) | (1 << PRTIM1) | (1 << PRSPI) | (1 << PRUSART0);
     PRR1 = (1 << PRTIM5) | (1 << PRTIM4) | (1 << PRTIM3) | (1 << PRUSART3) | (1 << PRUSART2) | (1 << PRUSART1);
 
-    // Set up timer 2 for 2000 Hz (data transmission)
+    // Set up timer 2 for 1984,127 Hz (data transmission)
     // Stopping the timer
     TCCR2A = 0;
     TCCR2B = 0;
     // Set current value to 0
     TCNT2 = 0;
-    // Set bit every 250 cycles
-    OCR2A = 249;
-    // Set no prescaler
-    TCCR2B |= (1 << CS20);
+    // Set bit every 63 cycles
+    OCR2A = 62;
     // Activate CTC Mode
     TCCR2A |= (1 << WGM21);
+    // Set no prescaler
+    TCCR2B |= (1 << CS20);
 
     // Set up timer 0 for 62,5 Hz (joystick)
     // Stopping the timer
@@ -697,18 +727,18 @@ int main(void)
     TCCR0B = 0;
     // Set the current value to 0
     TCNT0 = 0;
-    // Set bit every 125 cycles
-    OCR0A = 124;
-    // Set prescaler to 64
-    TCCR0B |= (1 << CS01) | (1 << CS00);
+    // Set bit every 250 cycles
+    OCR0A = 249;
     // Activate CTC Mode
     TCCR0A |= (1 << WGM01);
+    // Set prescaler to 8
+    TCCR0B |= (1 << CS01);
 
     // Set up ADC
     // Set reference voltage to Vcc
     ADMUX = (1 << REFS0);
-    // Set prescaler to 4
-    ADCSRA = (1 << ADEN) | (1 << ADPS1);
+    // Set prescaler to 2
+    ADCSRA = (1 << ADEN) | (1 << ADPS0);
     ADCSRB = 0;
 
     // Set up pins
