@@ -33,7 +33,7 @@
 		<Compiler>
 			<Add option="-Wall" />
 			<Add option="-mmcu=atmega2560" />
-			<Add option="-DF_CPU=500000UL" />
+			<Add option="-DF_CPU=125000UL" />
 			<Add option="-DF_OSC=16000000UL" />
 		</Compiler>
 		<Linker>
