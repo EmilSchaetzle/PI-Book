@@ -1,0 +1,6 @@
+DEBIAN_PACKAGE-dkms (MODULE_VERSION) stable; urgency=low
+
+  * Initial release of the HID driver for the PI-Book.
+
+ -- Emil Schätzle <pibook-hid-driver@emilschaetzle.de>  DATE_STAMP
+
