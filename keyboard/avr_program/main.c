@@ -772,7 +772,7 @@ int main(void)
 
     // Setup transmission and joystick pins
     DDRF = (1 << PF0);                                         // PF0 for transmission, PF1 for RX, PF2 for RY, PF3 for button
-    DDRF |= (1 << PF4) | (1 << PF5) | (1 << PF6) | (1 << PF7); //PF4-PF7 as OUTPUT (energy saving)
+    DDRF |= (1 << PF4) | (1 << PF5) | (1 << PF6) | (1 << PF7); // PF4-PF7 as OUTPUT (energy saving)
     PORTF = (1 << PF3);                                        // Enable pullup for the button pin
 
     sei();
