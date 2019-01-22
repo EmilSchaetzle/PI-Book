@@ -1,0 +1,5 @@
+(sym_lib_table
+  (lib (name SparkFun-Switches)(type Legacy)(uri C:/Users/ralfs/Downloads/SparkFun-Switches.lib)(options "")(descr ""))
+  (lib (name schematic-rescue)(type Legacy)(uri ${KIPRJMOD}/schematic-rescue.lib)(options "")(descr ""))
+  (lib (name keyboard-rescue)(type Legacy)(uri ${KIPRJMOD}/keyboard-rescue.lib)(options "")(descr ""))
+)
