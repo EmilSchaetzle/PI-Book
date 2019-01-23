@@ -1,0 +1,5 @@
+(sym_lib_table
+  (lib (name mt3608)(type Legacy)(uri "C:/Users/ralfs/Desktop/JuFo 2019/mt3608.lib")(options "")(descr ""))
+  (lib (name tp4056)(type Legacy)(uri "C:/Users/ralfs/Desktop/JuFo 2019/tp4056.lib")(options "")(descr ""))
+  (lib (name mylib)(type Legacy)(uri "C:/Users/ralfs/Desktop/JuFo 2019/mylib.lib")(options "")(descr ""))
+)
