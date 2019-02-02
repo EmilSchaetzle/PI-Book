@@ -694,6 +694,7 @@ void set_initial_state()
 int main(void)
 {
     cli();
+    _delay_ms(4000); // Wait for the raspberry pi to load the kernel module
     // Set up the systemclock to run at 125.000 Hz
     CLKPR = (1 << CLKPCE);
 #if F_OSC == 8000000
