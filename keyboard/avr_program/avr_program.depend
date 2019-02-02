@@ -11,3 +11,15 @@
 	<stdbool.h>
 	<stdlib.h>
 
+1549110125 source:/home/schaetzle/Cloud/Daten/Dokumente/Jugend Forscht/JuFo 2019 - PI-Book/repos/PI-Book/keyboard/avr_program/fuse.c
+	<avr/io.h>
+
+1549104524 source:/home/schaetzle/Cloud/Daten/Dokumente/Jugend Forscht/JuFo 2019 - PI-Book/repos/PI-Book/keyboard/avr_program/main.c
+	<avr/interrupt.h>
+	<avr/io.h>
+	<math.h>
+	<util/delay.h>
+	<stdint.h>
+	<stdbool.h>
+	<stdlib.h>
+
