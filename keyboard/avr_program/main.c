@@ -121,14 +121,14 @@ int16_t read_PF2()
 }
 int8_t read_rx()
 {
-    double val = read_PF1();
+    double val = read_PF2();
     val -= 511.5;
     val *= 49.0 / 1024;
     return (int8_t)round(val);
 }
 int8_t read_ry()
 {
-    double val = read_PF2();
+    double val = read_PF1();
     val -= 511.5;
     val *= 49.0 / 1024;
     return (int8_t)round(val);
