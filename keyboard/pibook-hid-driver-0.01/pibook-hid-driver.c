@@ -4,16 +4,20 @@
 #include <linux/kernel.h>
 #include <linux/gpio.h>
 #include <linux/interrupt.h>
-#include <linux/time.h>
+#include <linux/ktime.h>
 #include <linux/moduleparam.h>
+#include <linux/delay.h>
 
 #include <asm/irq.h>
 #include <asm/io.h>
 
-#define PIN 4
-#define BIT_DUR 504
+#define DATA_PIN 4
+#define POWER_PIN 17
+#define BIT_DUR 504000
 #define PIN_MAX 77
 
+#define HIGH true
+#define LOW false
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Emil Schätzle");
 MODULE_DESCRIPTION("Driver for the PI-Book keyboard");
@@ -25,10 +29,10 @@ module_param(mouse_factor, int, 0644);
 MODULE_PARM_DESC(mouse_factor, "Factor to scale the mouse movement.");
 
 int GPIO_IRQ;
-struct timeval last;
+ktime_t last;
 bool receiving = false;
-bool start_bit_handled;
-int received_bits;
+bool start_bit_handled = false;
+int received_bits = 0;
 bool bits[8];
 
 static struct input_dev *input_device;
@@ -37,17 +41,18 @@ static struct input_dev *input_device;
 static int get_time_difference(void)
 {
     long long int time;
-    struct timeval now;
-    do_gettimeofday(&now);
-    time = now.tv_sec - last.tv_sec;
-    if (time < 0)
-    {
-        time += 86400;
-    }
-    time *= 1000000;
-    time += now.tv_usec - last.tv_usec;
+    ktime_t now;
+    now = ktime_get();
+    time = ktime_to_ns(ktime_sub(now, last));
     last = now;
-    return time;
+    if (time <= INT_MAX)
+    {
+        return time;
+    }
+    else
+    {
+        return -1;
+    }
 }
 // Calculates the bit durations passed since last call
 static int get_BIT_DURs(void)
@@ -55,8 +60,15 @@ static int get_BIT_DURs(void)
     int time;
     int total_BIT_DURs;
     time = get_time_difference();
-    total_BIT_DURs = (time + BIT_DUR / 2) / BIT_DUR;
-    return total_BIT_DURs;
+    if (time != -1)
+    {
+        total_BIT_DURs = (time + BIT_DUR / 2) / BIT_DUR;
+        return total_BIT_DURs;
+    }
+    else
+    {
+        return -1;
+    }
 }
 // Converts a received pin value to an LINUX Key Value
 static int map_pin(int pin)
@@ -305,73 +317,87 @@ static void rising(void)
         int i;
         int BIT_DURs;
         BIT_DURs = get_BIT_DURs();
-        // Ignore startbit
-        if (!start_bit_handled && BIT_DURs > 0)
+        if (BIT_DURs != -1)
         {
-            BIT_DURs--;
-            start_bit_handled = true;
-        }
-        for (i = 0; i < BIT_DURs && i < 8; i++)
-        {
-            bits[received_bits + i] = false;
-        }
-        if (received_bits + BIT_DURs > 8)
-        {
-            // Error occured > abort receiving
-            receiving = false;
-        }
-        else
-        {
-            received_bits += BIT_DURs;
-            if (received_bits == 8)
+            // printk(KERN_INFO "Keyboard: low for %i\n", BIT_DURs);
+            // Ignore startbit
+            if (!start_bit_handled && BIT_DURs > 0)
             {
+                BIT_DURs--;
+                start_bit_handled = true;
+            }
+            for (i = 0; i < BIT_DURs && i < 8; i++)
+            {
+                bits[received_bits + i] = false;
+            }
+            if (received_bits + BIT_DURs > 8)
+            {
+                // Error occured > abort receiving
                 receiving = false;
-                data_received();
+                //printk(KERN_INFO "Keyboard: malicious byte\n");
+            }
+            else
+            {
+                received_bits += BIT_DURs;
+                if (received_bits == 8)
+                {
+                    receiving = false;
+                    data_received();
+                }
             }
         }
+    }
+    else
+    {
+        // Not receiving, reset timer anyway
+        last = ktime_get();
     }
 }
 static void falling(void)
 {
-    if (!receiving)
-    {
-        // New transmission starts, thus reset clock
-        get_time_difference();
-        receiving = true;
-        received_bits = 0;
-        start_bit_handled = false;
-    }
-    else
+    if (receiving)
     {
         // Data is currently beeing received
         int i;
         int BIT_DURs;
         BIT_DURs = get_BIT_DURs();
-        for (i = 0; i < BIT_DURs && i < 8; i++)
+        if (BIT_DURs != -1)
         {
-            bits[received_bits + i] = true;
-        }
-        if (received_bits + BIT_DURs > 8)
-        {
-            // Error occured > abort receiving
-            receiving = false;
-            // printk(KERN_INFO "Keyboard: malicious byte\n");
-        }
-        else
-        {
-            received_bits += BIT_DURs;
-            if (received_bits == 8)
+            //printk(KERN_INFO "Keyboard: high for %i\n", BIT_DURs);
+            for (i = 0; i < BIT_DURs && i < 8; i++)
             {
+                bits[received_bits + i] = true;
+            }
+            if (received_bits + BIT_DURs > 8)
+            {
+                // Error occured > abort receiving
                 receiving = false;
-                data_received();
+                // printk(KERN_INFO "Keyboard: malicious byte\n");
+            }
+            else
+            {
+                received_bits += BIT_DURs;
+                if (received_bits == 8)
+                {
+                    receiving = false;
+                    data_received();
+                }
             }
         }
+    }
+    else
+    {
+        // New transmission starts, thus reset clock
+        last = ktime_get();
+        receiving = true;
+        received_bits = 0;
+        start_bit_handled = false;
     }
 }
 static irqreturn_t interrupt(int irq, void *dev_id)
 {
     // Is the interrupt a rising or a falling Edge?
-    if (gpio_get_value(PIN))
+    if (gpio_get_value(DATA_PIN))
     {
         rising();
     }
@@ -389,33 +415,52 @@ static int __init pibook_hid_driver_init(void)
 {
     int result;
     int i;
-    printk(KERN_INFO "Keyboard: Initialising on pin %i\n", PIN);
-    result = gpio_request(PIN, "Keyboard pin");
+    printk(KERN_INFO "Keyboard: Claiming power pin %i\n", POWER_PIN);
+    result = gpio_request(POWER_PIN, "Keyboard power pin");
     if (result != 0)
     {
-        printk(KERN_ERR "Keyboard: Can't allocate pin %i\n", PIN);
+        printk(KERN_ERR "Keyboard: Can't allocate pin %i\n", POWER_PIN);
         return result;
     }
-    result = gpio_direction_input(PIN);
+    // Disable power supply
+    result = gpio_direction_output(POWER_PIN, LOW);
     if (result != 0)
     {
-        printk(KERN_ERR "Keyboard: Can't set pin %i to input\n", PIN);
-        gpio_free(PIN);
+        printk(KERN_ERR "Keyboard: Can't set pin %i to output (initial state: low)\n", POWER_PIN);
+        gpio_free(POWER_PIN);
         return result;
     }
-    printk(KERN_INFO "Keyboard: First value: %i\n", gpio_get_value(PIN));
-    GPIO_IRQ = gpio_to_irq(PIN);
+    printk(KERN_INFO "Keyboard: Initialising on pin %i\n", DATA_PIN);
+    result = gpio_request(DATA_PIN, "Keyboard data pin");
+    if (result != 0)
+    {
+        printk(KERN_ERR "Keyboard: Can't allocate pin %i\n", DATA_PIN);
+        gpio_free(POWER_PIN);
+        return result;
+    }
+    result = gpio_direction_input(DATA_PIN);
+    if (result != 0)
+    {
+        printk(KERN_ERR "Keyboard: Can't set pin %i to input\n", DATA_PIN);
+        gpio_free(POWER_PIN);
+        gpio_free(DATA_PIN);
+        return result;
+    }
+    // printk(KERN_INFO "Keyboard: First value: %i\n", gpio_get_value(DATA_PIN));
+    GPIO_IRQ = gpio_to_irq(DATA_PIN);
     if (GPIO_IRQ < 0)
     {
         printk(KERN_ERR "Keyboard: Can't find corresponding IRQ\n");
-        gpio_free(PIN);
+        gpio_free(POWER_PIN);
+        gpio_free(DATA_PIN);
         return GPIO_IRQ;
     }
     result = request_irq(GPIO_IRQ, interrupt, IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING, "Keyboard and joystick interrupt", interrupt);
     if (result != 0)
     {
         printk(KERN_ERR "Keyboard: Can't allocate IRQ %d\n", GPIO_IRQ);
-        gpio_free(PIN);
+        gpio_free(POWER_PIN);
+        gpio_free(DATA_PIN);
         return result;
     }
     printk(KERN_INFO "Keyboard: Initialising input device\n");
@@ -423,8 +468,9 @@ static int __init pibook_hid_driver_init(void)
     if (!input_device)
     {
         printk(KERN_ERR "Keyboard: Not enough memory\n");
+        gpio_free(POWER_PIN);
         free_irq(GPIO_IRQ, interrupt);
-        gpio_free(PIN);
+        gpio_free(DATA_PIN);
         return -ENOMEM;
     }
     input_device->evbit[BIT_WORD(EV_KEY)] = BIT_MASK(EV_KEY);
@@ -446,21 +492,29 @@ static int __init pibook_hid_driver_init(void)
     if (result != 0)
     {
         printk(KERN_ERR "Keyboard: Failed to register input device\n");
+        gpio_free(POWER_PIN);
         input_free_device(input_device);
         free_irq(GPIO_IRQ, interrupt);
-        gpio_free(PIN);
+        gpio_free(DATA_PIN);
         return result;
     }
-    do_gettimeofday(&last);
+    printk(KERN_INFO "Keyboard: Waiting for keyboard to run out of power\n");
+    msleep(10);
+    last = ktime_get();
+    gpio_set_value(POWER_PIN, HIGH);
     printk(KERN_INFO "Keyboard: Initialised\n");
     return 0;
 }
 static void __exit pibook_hid_driver_exit(void)
 {
     printk(KERN_INFO "Keyboard: Releasing resources\n");
+    // Disable power supply
+    gpio_set_value(POWER_PIN, LOW);
+
+    gpio_free(POWER_PIN);
     input_unregister_device(input_device);
     free_irq(GPIO_IRQ, interrupt);
-    gpio_free(PIN);
+    gpio_free(DATA_PIN);
     printk(KERN_INFO "Keyboard: Exit\n");
 }
 module_init(pibook_hid_driver_init);
