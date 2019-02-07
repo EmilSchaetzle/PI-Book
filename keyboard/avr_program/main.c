@@ -694,7 +694,6 @@ void set_initial_state()
 int main(void)
 {
     cli();
-    _delay_ms(4000); // Wait for the raspberry pi to load the kernel module
     // Set up the systemclock to run at 125.000 Hz
     CLKPR = (1 << CLKPCE);
 #if F_OSC == 8000000
@@ -772,9 +771,9 @@ int main(void)
     PORTG = 0x3F; // Enable pullup
 
     // Setup transmission and joystick pins
-    DDRF = (1 << PF0);                                         // PF0 for transmission, PF1 for RX, PF2 for RY, PF3 for button
-    DDRF |= (1 << PF4) | (1 << PF5) | (1 << PF6) | (1 << PF7); // PF4-PF7 as OUTPUT (energy saving)
-    PORTF = (1 << PF3);                                        // Enable pullup for the button pin
+    PORTF = (1 << PF0) | (1 << PF3);                        // Enable pullup for the button pin (do before setting to output to prevent additional interrupt)
+    DDRF = (1 << PF0)                                       // PF0 for transmission, PF1 for RX, PF2 for RY, PF3 for button
+           | (1 << PF4) | (1 << PF5) | (1 << PF6) | (1 << PF7);    // PF4-PF7 as OUTPUT (energy saving)
 
     sei();
 
@@ -784,7 +783,6 @@ int main(void)
     // Transmit initial state
     send_initial_state();
     set_initial_state();
-
     // Keep up-to-date
     while (true)
     {
