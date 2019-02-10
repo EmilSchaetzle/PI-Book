@@ -119,19 +119,31 @@ int16_t read_PF2()
     val += (1 << 8) * ADCH;
     return val;
 }
+int8_t map_value(double val)
+{
+    val -= 511.5;
+    val *= 51.0 / 1024;
+    int8_t rval = (int8_t)round(val);
+    if (rval > 1)
+    {
+        return rval - 1;
+    }
+    else if(rval < -1)
+    {
+        return rval +1;
+    }
+    else
+    {
+        return 0;
+    }
+}
 int8_t read_rx()
 {
-    double val = read_PF2();
-    val -= 511.5;
-    val *= 49.0 / 1024;
-    return (int8_t)round(val);
+    return(map_value(read_PF2()));
 }
 int8_t read_ry()
 {
-    double val = read_PF1();
-    val -= 511.5;
-    val *= 49.0 / 1024;
-    return (int8_t)round(val);
+    return(map_value(read_PF1()));
 }
 void send_initial_state()
 {
