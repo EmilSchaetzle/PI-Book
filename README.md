@@ -5,3 +5,5 @@ This repository features the development of a new Raspberry Pi based mobile lapt
 
 
 [Building instructions](BUILDING_INSTRUCTIONS.md)
+
+[German paper](PAPER_german.pdf)
